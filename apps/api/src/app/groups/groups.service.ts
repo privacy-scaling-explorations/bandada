@@ -1,5 +1,4 @@
 // import { BandadaContract, getBandadaContract, Network } from "@bandada/utils"
-import { id } from "@ethersproject/hash"
 import {
     BadRequestException,
     forwardRef,
@@ -13,6 +12,7 @@ import { InjectRepository } from "@nestjs/typeorm"
 import { Group as CachedGroup } from "@semaphore-protocol/group"
 import { Repository } from "typeorm"
 import { v4 } from "uuid"
+import { id } from "ethers"
 import { InvitesService } from "../invites/invites.service"
 import { CreateGroupDto } from "./dto/create-group.dto"
 import { UpdateGroupDto } from "./dto/update-group.dto"
