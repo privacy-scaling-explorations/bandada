@@ -1,8 +1,9 @@
 /* istanbul ignore file */
-import { id } from "@ethersproject/hash"
+
 import { Injectable } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm"
 import { FindOptionsWhere, Repository } from "typeorm"
+import { id } from "ethers"
 import { CreateAdminDTO } from "./dto/create-admin.dto"
 import { Admin } from "./entities/admin.entity"
 
