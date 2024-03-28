@@ -21,7 +21,6 @@ import {
     ApiQuery,
     ApiTags
 } from "@nestjs/swagger"
-import { ThrottlerGuard } from "@nestjs/throttler"
 import { Request } from "express"
 import { AuthGuard } from "../auth/auth.guard"
 import { stringifyJSON } from "../utils"
@@ -56,15 +55,11 @@ export class GroupsController {
     @Get(":group")
     @ApiOperation({ description: "Returns a specific group." })
     @ApiCreatedResponse({ type: Group })
-    async getGroup(@Param("group") groupId: string, @Req() req: Request) {
+    async getGroup(@Param("group") groupId: string) {
         const group = await this.groupsService.getGroup(groupId)
         const fingerprint = await this.groupsService.getFingerprint(groupId)
 
-        return mapGroupToResponseDTO(
-            group,
-            fingerprint,
-            req.session.adminId === group.adminId
-        )
+        return mapGroupToResponseDTO(group, fingerprint)
     }
 
     @Post()
@@ -77,11 +72,7 @@ export class GroupsController {
         )
         const fingerprint = await this.groupsService.getFingerprint(group.id)
 
-        return mapGroupToResponseDTO(
-            group,
-            fingerprint,
-            req.session.adminId === group.adminId
-        )
+        return mapGroupToResponseDTO(group, fingerprint)
     }
 
     @Delete(":group")
@@ -107,19 +98,7 @@ export class GroupsController {
 
         const fingerprint = await this.groupsService.getFingerprint(groupId)
 
-        return mapGroupToResponseDTO(
-            group,
-            fingerprint,
-            req.session.adminId === group.adminId
-        )
-    }
-
-    @Patch(":group/api-key")
-    @UseGuards(AuthGuard)
-    @UseGuards(ThrottlerGuard)
-    @ApiExcludeEndpoint()
-    async updateApiKey(@Req() req: Request, @Param("group") groupId: string) {
-        return this.groupsService.updateApiKey(groupId, req.session.adminId)
+        return mapGroupToResponseDTO(group, fingerprint)
     }
 
     @Get(":group/members/:member")

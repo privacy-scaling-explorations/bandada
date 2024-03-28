@@ -9,17 +9,23 @@ import { Invite } from "../invites/entities/invite.entity"
 import { InvitesService } from "../invites/invites.service"
 import { OAuthAccount } from "./entities/credentials-account.entity"
 import { CredentialsService } from "./credentials.service"
+import { AdminsModule } from "../admins/admins.module"
 
-jest.mock("@bandada/utils", () => ({
-    __esModule: true,
-    getBandadaContract: () => ({
-        updateGroups: () => ({
-            status: true,
-            logs: ["1"]
-        }),
-        getGroups: () => []
-    })
-}))
+jest.mock("@bandada/utils", () => {
+    const originalModule = jest.requireActual("@bandada/utils")
+
+    return {
+        __esModule: true,
+        ...originalModule,
+        getBandadaContract: () => ({
+            updateGroups: () => ({
+                status: true,
+                logs: ["1"]
+            }),
+            getGroups: () => []
+        })
+    }
+})
 
 jest.mock("@bandada/credentials", () => ({
     __esModule: true,
@@ -53,7 +59,8 @@ describe("CredentialsService", () => {
                     })
                 }),
                 TypeOrmModule.forFeature([Group, Invite, Member, OAuthAccount]),
-                ScheduleModule.forRoot()
+                ScheduleModule.forRoot(),
+                AdminsModule
             ],
             providers: [GroupsService, InvitesService, CredentialsService]
         }).compile()

@@ -1,10 +1,8 @@
+import { BadRequestException } from "@nestjs/common"
 import { Group } from "./entities/group.entity"
+import { Admin } from "../admins/entities/admin.entity"
 
-export function mapGroupToResponseDTO(
-    group: Group,
-    fingerprint: string = "",
-    includeAPIKey: boolean = false
-) {
+export function mapGroupToResponseDTO(group: Group, fingerprint: string = "") {
     const dto = {
         id: group.id,
         name: group.name,
@@ -15,15 +13,28 @@ export function mapGroupToResponseDTO(
         fingerprintDuration: group.fingerprintDuration,
         createdAt: group.createdAt,
         members: (group.members || []).map((m) => m.id),
-        credentials: group.credentials,
-        apiKey: undefined,
-        apiEnabled: undefined
-    }
-
-    if (includeAPIKey) {
-        dto.apiKey = group.apiKey
-        dto.apiEnabled = group.apiEnabled
+        credentials: group.credentials
     }
 
     return dto
+}
+
+export async function adminApiKeyCheck(
+    admin: Admin,
+    apiKey: string,
+    groupId?: string
+) {
+    if (!admin) {
+        throw new BadRequestException(
+            groupId
+                ? `Invalid admin for the group '${groupId}'`
+                : `Invalid admin for the groups`
+        )
+    }
+
+    if (!admin.apiEnabled || admin.apiKey !== apiKey) {
+        throw new BadRequestException(
+            `Invalid API key or API access not enabled for admin '${admin.id}'`
+        )
+    }
 }
