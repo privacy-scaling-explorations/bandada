@@ -1,10 +1,7 @@
-import { IsEnum, IsString } from "class-validator"
-import { ApiKeyActions } from "../../../types"
+import { ApiKeyActions } from "@bandada/utils"
+import { IsEnum } from "class-validator"
 
 export class UpdateApiKeyDTO {
-    @IsString()
-    adminId: string
-
     @IsEnum(ApiKeyActions)
     action: ApiKeyActions
 }

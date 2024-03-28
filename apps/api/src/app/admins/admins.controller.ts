@@ -1,8 +1,9 @@
-import { Body, Controller, Post, Put } from "@nestjs/common"
+import { Body, Controller, Get, Param, Post, Put } from "@nestjs/common"
+import { ApiCreatedResponse } from "@nestjs/swagger"
 import { CreateAdminDTO } from "./dto/create-admin.dto"
-import { UpdateApiKeyDTO } from "./dto/update-apikey.dto"
 import { AdminsService } from "./admins.service"
 import { Admin } from "./entities/admin.entity"
+import { UpdateApiKeyDTO } from "./dto/update-apikey.dto"
 
 @Controller("admins")
 export class AdminsController {
@@ -13,11 +14,17 @@ export class AdminsController {
         return this.adminsService.create(dto)
     }
 
-    @Put("update-apikey")
-    async updateApiKey(@Body() dto: UpdateApiKeyDTO): Promise<string> {
-        return this.adminsService.updateApiKey({
-            adminId: dto.adminId,
-            action: dto.action
-        })
+    @Get(":admin")
+    @ApiCreatedResponse({ type: Admin })
+    async getAdmin(@Param("admin") adminId: string) {
+        return this.adminsService.findOne({ id: adminId })
+    }
+
+    @Put(":admin/apikey")
+    async updateApiKey(
+        @Param("admin") adminId: string,
+        @Body() dto: UpdateApiKeyDTO
+    ): Promise<string> {
+        return this.adminsService.updateApiKey(adminId, dto.action)
     }
 }
